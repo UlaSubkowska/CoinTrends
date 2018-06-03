@@ -1,0 +1,4 @@
+Requirements:
+pip install Flask
+pip install flask-wtf
+pip install requests

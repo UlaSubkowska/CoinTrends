@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CoinTrends Challenge 2018</title>
+
+    <script src='static/Chart.js'></script>
+    <script src='static/chartjs-plugin-annotation.js'></script>
+
+</head>
+<body>
+    <div>
+        CoinTrends:
+        <a href="{{ url_for('index') }}">Home</a>
+    </div>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>CoinTrends Challenge 2018</h1>
+<!-- bar chart canvas element -->
+<canvas id="chart" width="1200" height="800"></canvas>
+
+
+
+<script>
+
+   //vertical week annotation
+   var week = [{% for item in week %}
+                  "{{item}}",
+              {% endfor %}]
+   var amount = [{% for item in amount %}
+                  "{{item}}",
+              {% endfor %}];
+
+   var week_annotation = week.map(function(date, index) {
+     return {
+       type: 'line',
+       id: 'vline'+index,
+       mode: 'vertical',
+       scaleID: 'x-axis-0',
+       value: date,
+       borderColor: 'black',
+       borderWidth: 1,
+       label: {
+         enabled: true,
+         position: "center",
+         content: amount[index]
+       }
+     }
+   });
+
+
+   // bar chart data
+
+   var labels=[{% for item in labels %}
+                  "{{item}}",
+              {% endfor %}]
+
+   var barData = {
+      labels : labels,
+      datasets : [
+         {
+            label: "BTCUSD",
+            borderColor: 'rgb(255, 0, 0)',
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [{% for item in BTCUSD %}
+                      {{item}},
+                    {% endfor %}]
+         },
+         {
+            label: "ETHUSD",
+            borderColor: 'rgb(0, 0, 255)',
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [{% for item in ETHUSD %}
+                      {{item}},
+                    {% endfor %}]
+         },
+         {
+            label: "LTCUSD",
+            borderColor: 'rgb(0, 128, 0)',
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [{% for item in LTCUSD %}
+                      {{item}},
+                    {% endfor %}]
+         },
+         {% set index=[0] %}
+         {% for B_list in B_trends %}
+         {
+            label: "B_trends",
+            borderColor: {% if B_list[0]>B_list[-1] %}
+                            'red'
+                            {%endif%}
+                            {% if B_list[0]<B_list[-1]%}
+                            'green'
+                            {%endif%},
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [
+                    {% for item in B_list %}
+                        {x:labels{{[index]}}, y:{{item}}},
+                        {%if index.append(index.pop()+1) %}{%endif%}
+                    {% endfor %}]
+         },
+         {%endfor %}
+         {% set index=[0] %}
+         {% for E_list in E_trends %}
+         {
+            label: "E_trends",
+            borderColor: {% if E_list[0]>E_list[-1] %}
+                            'red'
+                            {%endif%}
+                            {% if E_list[0]<E_list[-1]%}
+                            'green'
+                            {%endif%},
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [
+                    {% for item in E_list %}
+                        {x:labels{{[index]}}, y:{{item}}},
+                        {%if index.append(index.pop()+1) %}{%endif%}
+                    {% endfor %}]
+         },
+         {%endfor %}
+         {% set index=[0] %}
+         {% for L_list in L_trends %}
+         {
+            label: "L_trends",
+            borderColor: {% if L_list[0]>L_list[-1] %}
+                            'red'
+                            {%endif%}
+                            {% if L_list[0]<L_list[-1]%}
+                            'green'
+                            {%endif%},
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [
+                    {% for item in L_list %}
+                        {x:labels{{[index]}}, y:{{item}}},
+                        {%if index.append(index.pop()+1) %}{%endif%}
+                    {% endfor %}]
+         },
+         {%endfor %}
+
+     ],
+   };
+
+   Chart.defaults.global.animationSteps = 50;
+   Chart.defaults.global.tooltipYPadding = 16;
+   Chart.defaults.global.tooltipCornerRadius = 0;
+   Chart.defaults.global.tooltipTitleFontStyle = "normal";
+   Chart.defaults.global.tooltipFillColor = "rgba(0,0,0,0.8)";
+   Chart.defaults.global.animationEasing = "easeOutBounce";
+   Chart.defaults.global.responsive = false;
+   Chart.defaults.global.scaleLineColor = "black";
+   Chart.defaults.global.scaleFontSize = 16;
+
+   // get bar chart canvas
+   var mychart = document.getElementById("chart").getContext("2d");
+
+
+      // draw bar chart
+   var LineChart = new Chart(mychart, {
+     type: 'line',
+     data: barData,
+     options: {
+       scales: {
+         yAxes: [{
+           type: 'logarithmic'
+         }]
+       },
+      annotation: {
+         drawTime: 'afterDatasetsDraw',
+         annotations: week_annotation
+       }
+     }
+   });
+</script>
+
+<table style="width:100%">
+     <tr>
+        {% for item in trend_message %}
+            <td>"{{item}}"</td>
+        {% endfor %}
+     </tr>
+     <tr>
+        {% for arrow in B_grow_drop %}
+            {% if arrow==1%}
+                <td><img src="static/arrowupgreen.svg" height="42" width="42"></td>>
+            {%endif%}
+            {% if arrow==0%}
+                <td><img src="static/arrowdownred.svg" height="42" width="42"></td>
+            {%endif%}
+        {%endfor%}
+    </tr>
+ </table>
+
+{% endblock %}

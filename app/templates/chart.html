@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>CoinTrends Challenge 2018</h1>
+<!-- bar chart canvas element -->
+<canvas id="chart" width="1200" height="800"></canvas>
+
+
+
+<script>
+   // bar chart data
+   var barData = {
+      labels : [{% for item in labels %}
+                  "{{item}}",
+              {% endfor %}],
+      datasets : [
+         {
+            label: "BTCUSD",
+            borderColor: 'rgb(255, 0, 0)',
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [{% for item in BTCUSD %}
+                      {{item}},
+                    {% endfor %}]
+         },
+         {
+            label: "ETHUSD",
+            borderColor: 'rgb(0, 0, 255)',
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [{% for item in ETHUSD %}
+                      {{item}},
+                    {% endfor %}]
+         },
+         {
+            label: "LTCUSD",
+            borderColor: 'rgb(0, 128, 0)',
+            pointBorderColor: 'rgba(220, 220, 220,0)',
+            fill:false,
+            data : [{% for item in LTCUSD %}
+                      {{item}},
+                    {% endfor %}]
+         },
+
+     ],
+   };
+
+   Chart.defaults.global.animationSteps = 50;
+   Chart.defaults.global.tooltipYPadding = 16;
+   Chart.defaults.global.tooltipCornerRadius = 0;
+   Chart.defaults.global.tooltipTitleFontStyle = "normal";
+   Chart.defaults.global.tooltipFillColor = "rgba(0,0,0,0.8)";
+   Chart.defaults.global.animationEasing = "easeOutBounce";
+   Chart.defaults.global.responsive = false;
+   Chart.defaults.global.scaleLineColor = "black";
+   Chart.defaults.global.scaleFontSize = 16;
+
+   // get bar chart canvas
+   var mychart = document.getElementById("chart").getContext("2d");
+
+   // draw bar chart
+   var LineChart = new Chart(mychart, {
+     type: 'line',
+     data: barData,
+     options: {
+       scales: {
+         yAxes: [{
+           type: 'logarithmic'
+         }]
+       }
+     }
+   });
+</script>
+
+{% endblock %}
