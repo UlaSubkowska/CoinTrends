@@ -17,11 +17,11 @@ def data_to_old(date):
 
 def check_date(date):
     if date_future(date):
-        error_date_message = 'Sorry you can not type start date in future, please try type proper date.'
+        error_date_message = "Sorry you can't type start date in the future, please try type proper date."
         return error_date_message
     elif data_to_old(date):
-        error_date_message = 'Sorry but we do not have such a archival data, beginning data for ETHUSD and LTCUSD is ' \
-                             '2016-03-08, please type date ones again.'
+        error_date_message = 'Sorry but we do not have such an archival data, beginning data for ETHUSD and LTCUSD is ' \
+                             '2016-03-08, please type date once again.'
         return error_date_message
     return False
 
@@ -132,21 +132,25 @@ def grow_drop(X_trends):
 
 def BTCUSD_relations(B_grow_drop, E_grow_drop, L_grow_drop):
     trend_descript=[]
-    E_message=''
-    L_message=''
     B_grow_drop.pop()
     for (index, trend) in enumerate(B_grow_drop):
+        E_message = ''
+        L_message = ''
+        just_after = ''
         if trend:
             if E_grow_drop[index+1]:
                 E_message='ETHUSD started to grow,'
             if L_grow_drop[index+1]:
                 L_message='LTCUSD started to grow'
-            message='BTCUSD Growth\n{} {} just after BTCUSD'.format(E_message, L_message)
+            if E_message or L_message: just_after='just after BTCUSD'
+            message='BTCUSD Growth\n{} {} {}'.format(E_message, L_message, just_after)
         else:
             if not E_grow_drop[index+1]:
                 E_message='ETHUSD started to drop,'
             if not L_grow_drop[index+1]:
                 L_message='LTCUSD started to drop'
-            message = 'BTCUSD Drop\n{} {} just after BTCUSD'.format(E_message, L_message)
+            if E_message or L_message: just_after='just after BTCUSD'
+            message = 'BTCUSD Drop\n{} {} {}'.format(E_message, L_message, just_after)
         trend_descript.append(message)
     return trend_descript
+
