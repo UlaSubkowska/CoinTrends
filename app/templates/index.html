@@ -3,6 +3,7 @@
 {% block content %}
     <h1>Type date</h1>
     <p>Proper date format: yyyy-mm-dd</p>
+    {% if error_date_message %}<p style="color:red">{{error_date_message}}</p>{%endif%}
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>

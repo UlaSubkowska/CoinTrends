@@ -4,6 +4,27 @@ import requests
 list_of_symbols=['BTCUSD', 'ETHUSD', 'LTCUSD']
 start_dates={'BTCUSD':'2010-07-17', 'ETHUSD':'2016-03-08', 'LTCUSD':'2016-03-08'}
 
+def date_future(date):
+    now = time.gmtime()
+    date_UTC = time.strptime(date, '%Y-%m-%d')
+    return True if date_UTC > now else False
+
+def data_to_old(date):
+    start_date = '2016-03-08'
+    start_date=time.strptime(start_date, '%Y-%m-%d')
+    date_UTC = time.strptime(date, '%Y-%m-%d')
+    return False if start_date<date_UTC else True
+
+def check_date(date):
+    if date_future(date):
+        error_date_message = 'Sorry you can not type start date in future, please try type proper date.'
+        return error_date_message
+    elif data_to_old(date):
+        error_date_message = 'Sorry but we do not have such a archival data, beginning data for ETHUSD and LTCUSD is ' \
+                             '2016-03-08, please type date ones again.'
+        return error_date_message
+    return False
+
 
 def get_prices(symbol: str, start_date: str, end_date: str) ->str:
     url = "https://apiv2.bitcoinaverage.com/indices/global/history/{}?period=alltime&?format=json".format(symbol)
