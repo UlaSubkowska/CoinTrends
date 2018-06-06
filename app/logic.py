@@ -1,5 +1,6 @@
 import time
 import requests
+import datetime
 
 list_of_symbols=['BTCUSD', 'ETHUSD', 'LTCUSD']
 start_dates={'BTCUSD':'2010-07-17', 'ETHUSD':'2016-03-08', 'LTCUSD':'2016-03-08'}
@@ -13,7 +14,7 @@ def data_to_old(date):
     start_date = '2016-03-08'
     start_date=time.strptime(start_date, '%Y-%m-%d')
     date_UTC = time.strptime(date, '%Y-%m-%d')
-    return False if start_date<date_UTC else True
+    return False if start_date<=date_UTC else True
 
 def check_date(date):
     if date_future(date):
@@ -26,7 +27,7 @@ def check_date(date):
     return False
 
 
-def get_prices(symbol: str, start_date: str, end_date: str) ->str:
+def get_prices(symbol: str, start_date: str, end_date: str) ->list:
     url = "https://apiv2.bitcoinaverage.com/indices/global/history/{}?period=alltime&?format=json".format(symbol)
     response_data=requests.get(url, stream= True)
     start_date = time.strptime(start_date, '%Y-%m-%d')
@@ -53,8 +54,15 @@ def data_for_chart_labels(my_data: list)->list:
 
 def data_for_chart_prices(my_data: list)->list:
     values = []
-    for element in my_data:
+    for (inx, element) in enumerate(my_data):
         values.append(float(element['price']))
+        date_label = datetime.datetime.strptime(element['date'], '%Y-%m-%d')
+        next_day=date_label+datetime.timedelta(days=1)
+        if inx+1<len(my_data):
+            if datetime.datetime.strptime(my_data[inx+1]['date'], '%Y-%m-%d')>next_day:
+                    my_data.insert(inx+1,{'date':str(next_day).replace(' 00:00:00', ''), 'price':0})
+    for inx in range(len(values)):
+        if values[inx] == 0.0: values[inx]='null'
     return values
 
 
@@ -92,6 +100,8 @@ def trend_line(prices: list) -> list:
     sum_of_up = 0
     sum_of_down = 0
     result = []
+    for inx in range(len(prices)):
+        if prices[inx] == 'null': prices[inx]=prices[inx-1]                     #should be linear interpolation, it's simplifield
     how_many_elements = len(prices)
     price_avr = sum(prices) / how_many_elements
     t_avr_parameter = sum(range(how_many_elements + 1)) / how_many_elements
@@ -108,12 +118,14 @@ def trend_line(prices: list) -> list:
 
     return result
 
+
 def trends_lines(divided_data:list)->list:
     results=[]
     for week in divided_data:
         result=trend_line(week)
         results.append(result)
     return results
+
 
 def grow_drop(X_trends):
     grow=1

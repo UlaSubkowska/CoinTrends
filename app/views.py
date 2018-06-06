@@ -30,6 +30,7 @@ def index():
         B_trends = trends_lines(divide_data(BTCUSD))
         E_trends = trends_lines(divide_data(ETHUSD))
         L_trends = trends_lines(divide_data(LTCUSD))
+
         trend_message = BTCUSD_relations(grow_drop(B_trends), grow_drop(E_trends), grow_drop(L_trends))
         B_grow_drop = grow_drop(B_trends)
         del B_grow_drop[-1]
