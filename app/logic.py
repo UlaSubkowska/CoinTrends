@@ -10,17 +10,17 @@ def date_future(date):
     date_UTC = time.strptime(date, '%Y-%m-%d')
     return True if date_UTC > now else False
 
-def data_to_old(date):
+def data_too_old(date):
     start_date = '2016-03-08'
     start_date=time.strptime(start_date, '%Y-%m-%d')
     date_UTC = time.strptime(date, '%Y-%m-%d')
     return False if start_date<=date_UTC else True
 
-def check_date(date):
+def check_if_date_invalid(date):
     if date_future(date):
         error_date_message = "Sorry you can't type start date in the future, please try type proper date."
         return error_date_message
-    elif data_to_old(date):
+    elif data_too_old(date):
         error_date_message = 'Sorry but we do not have such an archival data, beginning data for ETHUSD and LTCUSD is ' \
                              '2016-03-08, please type date once again.'
         return error_date_message

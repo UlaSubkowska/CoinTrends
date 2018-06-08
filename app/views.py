@@ -2,7 +2,7 @@ from app import app
 from flask import render_template
 from app.forms import GetDate
 from app.logic import get_prices, data_for_chart_labels, data_for_chart_prices, week_annotation, divide_data, \
-    trends_lines, grow_drop, BTCUSD_relations, check_date
+    trends_lines, grow_drop, BTCUSD_relations, check_if_date_invalid
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -14,8 +14,8 @@ def index():
         end_date = str(form.end_date.data)
         trends = form.trends.data
 
-        if check_date(start_date):
-            return render_template('index.html', form=form, error_date_message=check_date(start_date))
+        if check_if_date_invalid(start_date):
+            return render_template('index.html', form=form, error_date_message=check_if_date_invalid(start_date))
 
         labels = data_for_chart_labels(get_prices('BTCUSD', start_date, end_date))
         BTCUSD = data_for_chart_prices(get_prices('BTCUSD', start_date, end_date))
