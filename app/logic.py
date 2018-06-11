@@ -5,6 +5,10 @@ import datetime
 list_of_symbols=['BTCUSD', 'ETHUSD', 'LTCUSD']
 start_dates={'BTCUSD':'2010-07-17', 'ETHUSD':'2016-03-08', 'LTCUSD':'2016-03-08'}
 
+error_date_future="Sorry you can't type start date in the future, please try type proper date."
+error_date_old='Sorry but we do not have such an archival data, beginning data for ETHUSD and LTCUSD is ' \
+                       '2016-03-08, please type date once again.'
+
 def date_future(date):
     now = time.gmtime()
     date_UTC = time.strptime(date, '%Y-%m-%d')
@@ -18,31 +22,29 @@ def data_too_old(date):
 
 def check_if_date_invalid(date):
     if date_future(date):
-        error_date_message = "Sorry you can't type start date in the future, please try type proper date."
+        error_date_message = error_date_future
         return error_date_message
     elif data_too_old(date):
-        error_date_message = 'Sorry but we do not have such an archival data, beginning data for ETHUSD and LTCUSD is ' \
-                             '2016-03-08, please type date once again.'
+        error_date_message = error_date_old
         return error_date_message
     return False
 
 
 def get_prices(symbol: str, start_date: str, end_date: str) ->list:
     url = "https://apiv2.bitcoinaverage.com/indices/global/history/{}?period=alltime&?format=json".format(symbol)
-    response_data=requests.get(url, stream= True)
+    response_data = requests.get(url, stream = True)
     start_date = time.strptime(start_date, '%Y-%m-%d')
     end_date = time.strptime(end_date, '%Y-%m-%d')
     my_data = []
     for chunk in response_data.json():
         chunk_date=chunk['time'].replace(' 00:00:00', '')
-        UTC_chunk_date=time.strptime(chunk_date, '%Y-%m-%d')
-        if UTC_chunk_date==start_date:
+        UTC_chunk_date = time.strptime(chunk_date, '%Y-%m-%d')
+        if UTC_chunk_date == start_date:
             my_data.append({'date': chunk_date, 'price': chunk['average']})
             my_data.reverse()
             return my_data
-        if UTC_chunk_date<=end_date:
+        if UTC_chunk_date <= end_date:
             my_data.append({'date': chunk_date, 'price': chunk['average']})
-
 
 def data_for_chart_labels(my_data: list)->list:
     labels=[]

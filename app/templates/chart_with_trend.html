@@ -5,7 +5,6 @@
 <canvas id="chart" width="1200" height="800"></canvas>
 
 
-
 <script>
 
    //vertical week annotation
@@ -111,7 +110,7 @@
          {% set index=[0] %}
          {% for L_list in L_trends %}
          {
-            label: "L_trends",
+            label: 'L_trends',
             borderColor: {% if L_list[0]>L_list[-1] %}
                             'red'
                             {%endif%}
@@ -155,10 +154,12 @@
            type: 'logarithmic'
          }]
        },
-      annotation: {
+       annotation: {
          drawTime: 'afterDatasetsDraw',
          annotations: week_annotation
-       }
+       },
+
+
      }
    });
 </script>
